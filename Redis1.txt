@@ -1,0 +1,60 @@
+REDIS
+
+> SET eletkor 25
+"OK"
+
+> GET eletkor
+"25"
+
+> EXPIRE eletkor 100
+(integer) 1
+
+> RPUSH nevek juci laci maci
+(integer) 3
+
+> LRANGE nevek 0 -1
+1) "juci"
+2) "laci"
+3) "maci"
+
+> HSET tanulo08 nev "Nagy Ivo" neptun xxx888 hianyzas 3
+(integer) 3
+
+> HGETALL tanulo08
+1) "nev"
+2) "Nagy Ivo"
+3) "neptun"
+4) "xxx888"
+5) "hianyzas"
+6) "3"
+
+> SADD tantargyak "Adatbazisok" "Programozas" "Matematika"
+(integer) 3
+
+> SADD vizsgatargy "Programozas" "Matematika"
+(integer) 2
+
+> SUNION tantargyak vizsgatargy
+1) "Adatbazisok"
+2) "Programozas"
+3) "Matematika"
+
+> SINTER tantargyak vizsgatargy
+1) "Programozas"
+2) "Matematika"
+
+> ZADD eredmenyek 50 laci 70 juci 10 maci
+(integer) 3
+
+> ZRANGE eredmenyek 0 -1
+1) "maci"
+2) "laci"
+3) "juci"
+
+> ZRANGE eredmenyek 0 -1 withscores
+1) "maci"
+2) "10"
+3) "laci"
+4) "50"
+5) "juci"
+6) "70"
