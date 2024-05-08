@@ -1,0 +1,107 @@
+Adat B 3 zh
+
+Mongo DB
+
+1. Mongo Playground
+Collection rész töröl, helyére a kollekció amiből kérdezünk
+
+db.collection.find( {szűrés}, {projekció})
+
+1. feladat //id nem jelenik meg, csak a megadott mezők
+
+db.collection.find({}, {
+"user_id": 1,
+"firstName": 1,
+"lastname": 1,
+"_id": 0})
+
+2. feladat //szűrés
+
+db.collection.find({"firstName": "Grace"}, {
+"email": 1,
+"password": 1,
+"_id": 0})
+
+4. Mongo DB Cloud
+
+a database között find -> 
+filter mezőbe: //itt nem szükséges a "" jel; $lt a kisebb mint
+{class_id: 339, student_id: {$lt: 100}}
+
+7. Mongo DB Compass (olyan mint a cloud)
+
+FILTER {likes_count: {$gt: 2}}
+PROJECT {ingredients: 0, rating: 0}
+SORT {cook_time: -1}
+
+11. Mongo Shell/ Power Shell
+
+show.dbs
+
+use Gyak_compass
+
+db.receptek.find({"title": {$regex: /Tacos/}}, {}).pretty()
+
+//json szerű formátum, szavakra amik tartalmazzás a Tacos szót
+
+12. //_id: mi szerint csoportosítunk?, itt a mezőnevek elé kell a $jel //kiszámítást elnevezzük total:-nak, amit sum szerint aggregálunk
+
+db.receptek.aggregate([
+... {$group:
+... {_id: "$type", total: {$sum: "$cook_time"}}}])
+
+13. //and operátorba a több feltétel, tags tömben quick vagy easy szavak így, majd megszámlálás
+
+db.receptek.find({$and:
+... [{servings: 4}, {tags: {$in: ["quick", "easy"]}}]}, {}).count()
+
+NEO4J
+
+17.
+
+MATCH (p:Person)
+WHERE p.born = 1964 OR p.born = 1965
+RETURN p.Name, p.born
+
+18.
+
+MATCH (m:Movie)
+WHERE m.title STRATS WITH 'A'
+RETURN m.title, m.released
+ORDER BY m.released DESC
+
+19. //az ember rendezi a filmet, és nem a film az embert ezért az irány
+
+MATCH (p:Person)-[:DIRECTED]->(m:Movie)
+WHERE p.name = 'Joel Silver'
+RETURN m.title
+
+vagy
+
+MATCH (p:Person {name: 'Joel Silver'})-[:DIRECTED]->(m:Movie)
+RETURN m.title
+
+20. //HAVING funkció //altgr 7 de online verzióban nem kell 
+
+MATCH (p:Person)-[:DIRECTED]->(m:Movie)
+WITH p.name AS `nev`, COUNT(*) AS `db`
+WHERE db > 1
+RETURN nev, db
+
+21.
+
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(p:Person)
+RETURN (p)
+
+vagy
+
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WHERE EXISTS ((p:Person)-[:DIRECTED]->(m:Movie))
+RETURN (p)
+
+22.
+
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+RETURN m.title, COUNT(*)
+OREDR BY COUNT(*) DESC, m.title
+LIMIT 10
