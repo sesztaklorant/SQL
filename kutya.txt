@@ -1,0 +1,180 @@
+> HSET dolgozo:1 nev "Nagy Eva" munkakor titkarno kod 1
+(integer) 3
+
+> HSET dolgozo:2 nev "Kiss Ilona" munkakor konyvelo kod 2
+(integer) 3
+
+> HSET project:1:1 projektnev "EURO-33"
+(integer) 1
+
+> HSET projekt:3:2 projektnev "TRANS-22"
+(integer) 1
+
+> ZADD dolgozo:nev 1 "Nagy Eva" 2 "Kiss Ilona"
+(integer) 2
+
+> SET dolgozo:1:nev "Nagy Eva"
+"OK"
+
+> SET dolgozo:1:munkakor titkarno
+"OK"
+
+
+Connected as sesztaklorant@gmail.com.
+Connected to cndb at cassandra.ingress:9042.
+[cqlsh 6.8.0 | Cassandra 4.0.0.6816 | CQL spec 3.4.5 | Native protocol v4 | TLS]
+Use HELP for help.
+token@cqlsh> describe keyspaces;
+
+system_auth    proba               system_traces        
+system_schema  data_endpoint_auth  system_virtual_schema
+datastax_sla   system              system_views         
+
+token@cqlsh> use "Movies"
+   ... ;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Keyspace 'Movies' does not exist"
+token@cqlsh> use "proba";
+token@cqlsh:proba> describe tables;
+
+movies_and_tv
+
+token@cqlsh:proba> SELECT title
+FROM movies_and_tv
+WHERE type = 'Movie' AND release_year = 2018;
+LIMIT 5;
+
+SELECT type, release_year, COUNT(*)
+          ... FROM movies_and_tv 
+          ... GROUP BY type, release_year LIMIT 5;
+
+SELECT type, release_year, COUNT(*)
+FROM movies_and_tv 
+GROUP BY type, release_year LIMIT 5;
+
+INSERT INTO szemely (nev, szulev, foglalkozas)
+         ... VALUES ('Kiss Bela', 2000, 'lakatos');
+vegzettseg = ['gepesz', 'muszeresz']
+
+
+
+Connected as sesztaklorant@gmail.com.
+Connected to cndb at cassandra.ingress:9042.
+[cqlsh 6.8.0 | Cassandra 4.0.0.6816 | CQL spec 3.4.5 | Native protocol v4 | TLS]
+Use HELP for help.
+token@cqlsh> use "porba"
+   ... use "porba";
+Improper use command.
+token@cqlsh> use "proba";
+token@cqlsh:proba> SELECT type, release_year, COUNT(*)
+         ... FROM movies_and_tv
+         ... GROUP BY type, release-year LIMIT 5;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name release"
+token@cqlsh:proba> 
+token@cqlsh:proba> SELECT type, release_year, COUNT(*)
+         ...          ... FROM movies_and_tv
+         ...  GROUP BY type, release-year LIMIT 5;
+token@cqlsh:proba> SELECT type, release_year, COUNT(*)
+         ... FROM movies_and_tv
+         ... GROUP BY type, release-year LIMIT 5;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name release"
+token@cqlsh:proba> SELECT type, release_year, COUNT(*)
+         ...           ... FROM movies_and_tv 
+         ...           ... GROUP BY type, release_year LIMIT 5;
+SyntaxException: line 2:10 mismatched input '..' expecting K_FROM (..., release_year, COUNT(*)          [..]...)
+token@cqlsh:proba> SELECT type, release_year, COUNT(*)
+         ... FROM movies_and_tv 
+         ... GROUP BY type, release_year LIMIT 5;
+
+ type    | release_year | count
+---------+--------------+-------
+   Movie |         1958 |     2
+   Movie |         1965 |     2
+ TV Show |         2018 |    19
+   Movie |         1995 |    14
+   Movie |         2013 |   153
+
+(5 rows)
+
+Warnings :
+Aggregation query used without partition key
+
+token@cqlsh:proba> drop table szemely;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Table 'proba.szemely' doesn't exist"
+token@cqlsh:proba> drop table szemely;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Table 'proba.szemely' doesn't exist"
+token@cqlsh:proba> CREATE TABLE szemely
+         ... (
+         ... nev TEXT;
+SyntaxException: line 3:8 mismatched input ';' expecting ')'
+token@cqlsh:proba> CREATE TABLE szemely
+         ... (
+         ... nev TEXT,
+         ... szulev int,
+         ... foglalkozas TEXT,
+         ... PRIMARY KEY ((nev, szulev), foglalkozas)
+         ... );
+token@cqlsh:proba> desc table szemely;
+
+CREATE TABLE proba.szemely (
+    nev text,
+    szulev int,
+    foglalkozas text,
+    PRIMARY KEY ((nev, szulev), foglalkozas)
+) WITH CLUSTERING ORDER BY (foglalkozas ASC)
+    AND additional_write_policy = '99PERCENTILE'
+    AND bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.UnifiedCompactionStrategy'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair = 'BLOCKING'
+    AND speculative_retry = '99PERCENTILE';
+
+token@cqlsh:proba> INSERT INTO szemely (nev, szulev, foglalkozas)
+         ... VALUES ('Kiss Bela', 2000, 'lakatos');
+token@cqlsh:proba> 
+token@cqlsh:proba> INSERT INTO szemely (nev, szulev, foglalkozas)
+         ...  VALUES ('Toth Otto', 2000, 'pincer');
+token@cqlsh:proba> SELECT * FROM szemely
+         ... 
+         ... S
+         ... ;
+SyntaxException: line 3:0 no viable alternative at input 'S' (SELECT * FROM [szemely]S...)
+token@cqlsh:proba> SELECT * FROM szemely;
+
+ nev       | szulev | foglalkozas
+-----------+--------+-------------
+ Kiss Bela |   2000 |     lakatos
+ Toth Otto |   2000 |      pincer
+
+(2 rows)
+token@cqlsh:proba> ALTER TABLE szemely
+         ... ADD vegzettseg LIST<TEXT>;
+token@cqlsh:proba> UPDATE szemely
+         ... SET vegzettseg = ['gepesz', 'muszeresz']
+         ... WHERE nev = 'Kiss Bela' AND szulev = 2000 AND foglalkozas = 'pincer';
+token@cqlsh:proba> SELECT * FROM szemely;
+
+ nev       | szulev | foglalkozas | vegzettseg
+-----------+--------+-------------+-------------------------
+ Kiss Bela |   2000 |     lakatos |                    null
+ Kiss Bela |   2000 |      pincer | ['gepesz', 'muszeresz']
+ Toth Otto |   2000 |      pincer |                    null
+
+(3 rows)
+token@cqlsh:proba> DELETE FROM szemely WHERE nev = 'Kiss Bela' AND szulev = 2000 AND foglalkozas = 'pincer' AND vegzettseg = ['gepesz', 'muszeresz'];
+token@cqlsh:proba> 
+token@cqlsh:proba> 
+
+UPDATE szemely SET vegzettseg = ['gepesz', 'muszeresz'] WHERE nev = 'Kiss Bela' AND szulev = 2000 AND foglalkozas = 'lakatos';
+
+UPDATE TABLE szemely
+         ... SET nyelvtudas = {'angol', 'francia'}
+         ... WHERE nev = 'Toth Otto' AND szulev = 2000
+         ... AND foglalkozas = 'pincer';
